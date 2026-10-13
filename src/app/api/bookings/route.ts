@@ -8,6 +8,7 @@ import { buildConfirmationHtml, sendBookingEmail } from "@/lib/email";
 import { addMinutesToTime, generateBookingRef, isPastDate, todayISO } from "@/lib/time";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 30;
 
 function isEmail(v: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
@@ -95,7 +96,8 @@ export async function POST(req: Request) {
     const barberRows = await db.select().from(barbers).where(eq(barbers.id, assignedBarberId));
     const barberName = barberRows[0]?.name ?? "First available";
 
-    // Send confirmation email (non-blocking failure — booking still stands)
+    // Attempt live delivery. A missing email provider never rolls back the booking,
+    // but is explicitly reported as failed instead of pretending it was sent.
     const emailData = {
       bookingRef: ref,
       customerName: name,
@@ -111,31 +113,43 @@ export async function POST(req: Request) {
       barberName,
       status: "confirmed",
     };
-    let emailStatus: { provider: string; sent: boolean; error?: string } = { provider: "console", sent: true };
+    let emailStatus: { provider: string; sent: boolean; error?: string } = {
+      provider: "unconfigured",
+      sent: false,
+      error: "No email provider is configured.",
+    };
+    let emailHtml = "";
     try {
-      const { result, html } = await sendBookingEmail(emailData);
-      emailStatus = { provider: result.provider, sent: result.ok, error: result.ok ? undefined : (result as { error?: string }).error };
+      const { result, html } = await sendBookingEmail(emailData, req.url);
+      emailHtml = html;
+      emailStatus = {
+        provider: result.provider,
+        sent: result.ok,
+        error: result.ok ? undefined : result.error,
+      };
+    } catch (e) {
+      emailHtml = buildConfirmationHtml(emailData, req.url);
+      emailStatus = {
+        provider: "unknown",
+        sent: false,
+        error: e instanceof Error ? e.message : String(e),
+      };
+      console.error("[booking] Confirmation email failed:", e);
+    }
+
+    // Email logging is best-effort; a logging issue must not change actual delivery status.
+    try {
       await db.insert(emailLogs).values({
         bookingRef: ref,
         toEmail: email,
         subject: `Booking confirmed ${ref}`,
-        provider: result.provider,
-        status: result.ok ? "sent" : "failed",
-        previewHtml: html,
-        error: result.ok ? "" : String((result as { error?: string }).error ?? ""),
+        provider: emailStatus.provider,
+        status: emailStatus.sent ? "sent" : "failed",
+        previewHtml: emailHtml,
+        error: emailStatus.error ?? "",
       });
     } catch (e) {
-      const html = buildConfirmationHtml(emailData);
-      emailStatus = { provider: "console", sent: false, error: String(e) };
-      await db.insert(emailLogs).values({
-        bookingRef: ref,
-        toEmail: email,
-        subject: `Booking confirmed ${ref}`,
-        provider: "console",
-        status: "failed",
-        previewHtml: html,
-        error: String(e),
-      });
+      console.error("[booking] Could not write email log:", e);
     }
 
     return NextResponse.json(

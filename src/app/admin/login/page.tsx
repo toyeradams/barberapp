@@ -39,7 +39,7 @@ export default function AdminLoginPage() {
             <Scissors className="h-7 w-7" strokeWidth={2.5} />
           </span>
           <h1 className="font-display mt-4 text-3xl font-bold">Admin Login</h1>
-          <p className="mt-1 text-sm text-[#a7a7b0]">SharpFade Barbershop control panel</p>
+          <p className="mt-1 text-sm text-[#a7a7b0]">Rizz Fade Barbershop control panel</p>
         </div>
         <form onSubmit={submit} className="mt-8 rounded-2xl border border-white/10 bg-[#131316] p-6">
           <label className="flex items-center gap-2 text-sm font-bold">

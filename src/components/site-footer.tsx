@@ -16,12 +16,12 @@ export function SiteFooter() {
               <Scissors className="h-5 w-5" strokeWidth={2.5} />
             </span>
             <span className="font-display text-xl font-bold">
-              SHARP<span className="text-gold-gradient">FADE</span>
+              RIZZ <span className="text-gold-gradient">FADE</span>
             </span>
           </div>
           <p className="mt-4 text-sm leading-relaxed text-[#a7a7b0]">
             Premium cuts, hot-towel shaves and beard architecture. Book online in under a
-            minute — instant email confirmation.
+            minute — your booking reference is instant, with email updates when delivery is configured.
           </p>
         </div>
         <div>
@@ -29,7 +29,7 @@ export function SiteFooter() {
           <ul className="mt-4 space-y-3 text-sm text-[#d8d8de]">
             <li className="flex gap-2"><MapPin className="h-4 w-4 shrink-0 text-[#c9a86a]" /> 24 Gentlemen&apos;s Row, Old Town</li>
             <li className="flex gap-2"><Phone className="h-4 w-4 shrink-0 text-[#c9a86a]" /> (555) 123-4567</li>
-            <li className="flex gap-2"><Mail className="h-4 w-4 shrink-0 text-[#c9a86a]" /> hello@sharpfade.shop</li>
+            <li className="flex gap-2"><Mail className="h-4 w-4 shrink-0 text-[#c9a86a]" /> hello@rizzfade.shop</li>
           </ul>
         </div>
         <div>
@@ -53,7 +53,7 @@ export function SiteFooter() {
       </div>
       <div className="barber-stripes h-1.5 opacity-80" />
       <p className="py-5 text-center text-xs text-[#6b6b72]">
-        © {new Date().getFullYear()} SharpFade Barbershop · Crafted with precision
+        © {new Date().getFullYear()} Rizz Fade Barbershop · Crafted with precision
       </p>
     </footer>
   );

@@ -103,6 +103,17 @@ export async function ensureSchema(): Promise<void> {
     await db.execute(sql`CREATE INDEX IF NOT EXISTS idx_bookings_date ON bookings(date);`);
     await db.execute(sql`CREATE INDEX IF NOT EXISTS idx_bookings_status ON bookings(status);`);
     await db.execute(sql`CREATE INDEX IF NOT EXISTS idx_bookings_ref ON bookings(booking_ref);`);
+    // Older releases marked console-only demo logs as sent even though no email
+    // was delivered. Correct those records so the admin log is trustworthy.
+    await db.execute(sql`
+      UPDATE email_logs
+      SET status = 'failed',
+          error = CASE
+            WHEN error = '' THEN 'Email was logged locally only; no live email provider was configured.'
+            ELSE error
+          END
+      WHERE provider = 'console' AND status = 'sent';
+    `);
     ensured = true;
   } catch (e) {
     console.error("[ensureSchema] failed:", e);

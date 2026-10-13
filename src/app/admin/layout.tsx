@@ -80,7 +80,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <Scissors className="h-5 w-5" strokeWidth={2.5} />
         </span>
         <span>
-          <span className="font-display block text-lg font-bold leading-none">SHARPFADE</span>
+          <span className="font-display block text-lg font-bold leading-none">RIZZ FADE</span>
           <span className="text-[10px] uppercase tracking-[0.3em] text-[#c9a86a]">Admin</span>
         </span>
       </Link>
@@ -131,7 +131,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <button onClick={() => setOpen(true)} className="grid h-9 w-9 place-items-center rounded-lg border border-white/10">
             <Menu className="h-5 w-5" />
           </button>
-          <span className="font-display font-bold">SHARPFADE Admin</span>
+          <span className="font-display font-bold">Rizz Fade Admin</span>
         </div>
         <div className="p-4 sm:p-8">{children}</div>
       </div>

@@ -58,8 +58,10 @@ export default function BookPage() {
   const [notes, setNotes] = useState("");
 
   const [submitting, setSubmitting] = useState(false);
+  const [emailRetrying, setEmailRetrying] = useState(false);
+  const [emailRetryError, setEmailRetryError] = useState("");
   const [error, setError] = useState("");
-  const [done, setDone] = useState<{ ref: string; emailSent: boolean; provider: string } | null>(null);
+  const [done, setDone] = useState<{ ref: string; emailSent: boolean; provider: string; emailError?: string } | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -143,15 +145,42 @@ export default function BookPage() {
       }
       setDone({
         ref: data.booking.bookingRef,
-        emailSent: data.email?.sent !== false,
-        provider: data.email?.provider ?? "console",
+        emailSent: data.email?.sent === true && data.email?.provider !== "console",
+        provider: data.email?.provider ?? "unconfigured",
+        emailError: data.email?.error,
       });
+      setEmailRetryError("");
       setStep(5);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch {
       setError("Network error. Please try again.");
     } finally {
       setSubmitting(false);
+    }
+  }
+
+  async function resendConfirmation() {
+    if (!done) return;
+    setEmailRetrying(true);
+    setEmailRetryError("");
+    try {
+      const res = await fetch(`/api/bookings/${done.ref}/email`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim() }),
+      });
+      const data = await res.json();
+      if (!res.ok || data.email?.sent !== true) {
+        const message = data.email?.error || data.error || "The email could not be delivered.";
+        setEmailRetryError(message);
+        setDone({ ...done, emailSent: false, emailError: message });
+        return;
+      }
+      setDone({ ...done, emailSent: true, provider: data.email.provider, emailError: undefined });
+    } catch {
+      setEmailRetryError("Network error while retrying the email. Please try again.");
+    } finally {
+      setEmailRetrying(false);
     }
   }
 
@@ -172,6 +201,9 @@ export default function BookPage() {
       <h1 className="font-display mt-2 text-center text-4xl font-bold md:text-5xl">
         Book your <span className="text-gold-gradient italic">chair</span>
       </h1>
+      <p className="mt-2 text-center text-xs font-semibold uppercase tracking-widest text-[#c9a86a]">
+        All prices in South African Rand (ZAR)
+      </p>
 
       {/* Stepper */}
       {step <= 4 && (
@@ -437,7 +469,7 @@ export default function BookPage() {
             </div>
             <p className="mt-4 flex items-start gap-2 text-xs leading-relaxed text-[#a7a7b0]">
               <MailCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#c9a86a]" />
-              A confirmation email with your booking reference will be sent to <b className="text-white">{email}</b> immediately after confirming.
+              We&apos;ll attempt to email your booking confirmation to <b className="text-white">{email}</b>. Your booking reference will be shown here even if email delivery needs attention.
             </p>
             {error && (
               <p className="mt-4 rounded-xl border border-red-500/40 bg-red-500/10 p-4 text-sm text-red-200">{error}</p>
@@ -476,10 +508,35 @@ export default function BookPage() {
             <div className="mt-6 rounded-2xl border border-dashed border-[#c9a86a]/50 bg-[#131316] p-6">
               <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#a7a7b0]">Booking reference</p>
               <p className="font-display mt-2 text-4xl font-extrabold tracking-widest text-[#e8cf9a]">{done.ref}</p>
-              <p className="mt-3 flex items-center justify-center gap-2 text-sm text-[#a7a7b0]">
-                <MailCheck className="h-4 w-4 text-[#c9a86a]" />
-                Confirmation email sent to <b className="text-white">{email}</b>
+              <p className={`mt-3 flex items-start justify-center gap-2 text-sm ${done.emailSent ? "text-emerald-200" : "text-amber-200"}`}>
+                <MailCheck className="mt-0.5 h-4 w-4 shrink-0" />
+                {done.emailSent ? (
+                  <span>
+                    Email accepted by <b>{done.provider}</b> for <b>{email}</b>. Check your inbox and spam folder.
+                  </span>
+                ) : (
+                  <span>
+                    Your booking is confirmed, but the confirmation email was <b>not delivered</b>. Your booking reference above is valid.
+                  </span>
+                )}
               </p>
+              {!done.emailSent && (
+                <div className="mt-4">
+                  <button
+                    onClick={resendConfirmation}
+                    disabled={emailRetrying}
+                    className="inline-flex items-center justify-center gap-2 rounded-full border border-[#c9a86a]/50 px-5 py-2.5 text-sm font-bold text-[#e8cf9a] transition hover:bg-[#c9a86a]/10 disabled:opacity-60"
+                  >
+                    {emailRetrying && <Loader2 className="h-4 w-4 animate-spin" />}
+                    {emailRetrying ? "Retrying…" : "Resend confirmation email"}
+                  </button>
+                  {(emailRetryError || done.emailError) && (
+                    <p className="mt-3 text-left text-xs leading-relaxed text-amber-200/80">
+                      {emailRetryError || done.emailError}
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
             <div className="mt-6 flex flex-wrap justify-center gap-3">
               <Link

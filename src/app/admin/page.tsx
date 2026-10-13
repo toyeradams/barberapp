@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   CalendarDays,
-  DollarSign,
+  Banknote,
   Users,
   TrendingUp,
   Loader2,
@@ -39,7 +39,7 @@ export default function AdminOverviewPage() {
 
   const k = analytics?.kpis ?? {};
   const cards = [
-    { label: "Revenue (30d)", value: formatPrice(k.revenueCents ?? 0), icon: DollarSign, sub: `${k.bookings ?? 0} bookings` },
+    { label: "Revenue (30d)", value: formatPrice(k.revenueCents ?? 0), icon: Banknote, sub: `${k.bookings ?? 0} bookings` },
     { label: "Today's chairs", value: String(today.length), icon: CalendarDays, sub: "confirmed bookings" },
     { label: "Avg. ticket", value: formatPrice(k.avgTicketCents ?? 0), icon: TrendingUp, sub: "per booking" },
     { label: "Upcoming", value: String(k.upcoming ?? 0), icon: Users, sub: "future bookings" },

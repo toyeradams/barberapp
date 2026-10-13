@@ -28,6 +28,9 @@ export default function ServicesPage() {
       <p className="mx-auto mt-4 max-w-xl text-center text-[#a7a7b0]">
         Every service includes consultation, precision cut and style finish. No hidden fees, ever.
       </p>
+      <p className="mt-2 text-center text-xs font-semibold uppercase tracking-widest text-[#c9a86a]">
+        All prices are in South African Rand (ZAR)
+      </p>
 
       <div className="mt-8 flex flex-wrap justify-center gap-2">
         {cats.map((c) => (

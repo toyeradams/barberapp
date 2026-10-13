@@ -1,4 +1,4 @@
-# 🚀 Deploy SharpFade Barbershop to Vercel
+# 🚀 Deploy Rizz Fade Barbershop to Vercel
 
 This project is packaged for zero-friction Vercel deployment:
 - ✅ `vercel.json` pre-configured (Next.js framework, build command)
@@ -15,9 +15,9 @@ This project is packaged for zero-friction Vercel deployment:
 ```bash
 git init
 git add .
-git commit -m "SharpFade barbershop"
+git commit -m "Rizz Fade barbershop"
 git branch -M main
-git remote add origin https://github.com/YOU/sharpfade.git
+git remote add origin https://github.com/YOU/rizz-fade.git
 git push -u origin main
 ```
 
@@ -42,14 +42,14 @@ Project → **Settings** → **Environment Variables**. Add for **Production** (
 | `ADMIN_PASSWORD` | e.g. `MyShop-2026-Secure!` | ✅ |
 | `ADMIN_SESSION_SECRET` | generate: `openssl rand -base64 32` | ✅ |
 | `NEXT_PUBLIC_APP_URL` | `https://YOUR-PROJECT.vercel.app` (update after first deploy if needed) | ✅ |
-| `SHOP_NAME` | `SharpFade Barbershop` | optional |
+| `SHOP_NAME` | `Rizz Fade Barbershop` | optional |
 | `RESEND_API_KEY` | `re_…` from [resend.com](https://resend.com) | for live email |
-| `EMAIL_FROM` | `SharpFade <bookings@yourdomain.com>` | for live email |
+| `EMAIL_FROM` | `Rizz Fade <bookings@yourdomain.com>` | for live email |
 
 Or paste from `.env.example` / the `/admin/deploy` page.
 
 ### 5. Deploy
-Hit **Deploy**. Vercel builds (`next build`) and gives you a URL like `https://sharpfade-xyz.vercel.app`.
+Hit **Deploy**. Vercel builds (`next build`) and gives you a URL like `https://rizz-fade-xyz.vercel.app`.
 
 ### 6. Seed the demo data (one click)
 Option 1 — in-app (easiest):
@@ -101,7 +101,7 @@ curl -X POST https://YOUR-APP.vercel.app/api/setup
 
 ### Any SMTP provider (Gmail example)
 1. Gmail → Google Account → Security → **2-Step Verification** → **App passwords** → create one.
-2. Set env vars: `SMTP_HOST=smtp.gmail.com`, `SMTP_PORT=587`, `SMTP_USER=you@gmail.com`, `SMTP_PASS=<16-char app password>`, `EMAIL_FROM="SharpFade <you@gmail.com>"`.
+2. Set env vars: `SMTP_HOST=smtp.gmail.com`, `SMTP_PORT=587`, `SMTP_USER=you@gmail.com`, `SMTP_PASS=<16-char app password>`, `EMAIL_FROM="Rizz Fade <you@gmail.com>"`.
 3. Redeploy and test.
 
 ### Demo mode (no email config)
@@ -126,7 +126,7 @@ Bookings still succeed. Every email is:
 | Build fails: `DATABASE_URL is required` | Add `DATABASE_URL` in Settings → Env Vars, then redeploy. (The app tolerates a missing DB at build time, but runtime needs it.) |
 | `/admin` says unauthorized / loops to login | `ADMIN_SESSION_SECRET` differs between deploys, or cookies blocked. Re-login; ensure the secret is set in Production. |
 | Booking page shows "No services" | Hit `POST /api/setup` once (or Deploy tab → Seed). Then refresh. |
-| No email arrives | Check `/admin/emails` for provider + error. In demo mode nothing is actually sent — add `RESEND_API_KEY`. With Resend, verify the domain and check spam. |
+| No email arrives | Check `/admin/emails` for provider + error. Add both `RESEND_API_KEY` and `EMAIL_FROM` (sender domain verified in Resend), or configure SMTP. Redeploy, then resend from the booking details page. Check spam. |
 | Slots show "Closed" every day | `/admin` → Availability → save weekly hours for the shop scope. |
 | SSL / connection errors to Postgres | Ensure the connection string includes `?sslmode=require` (Neon/Vercel do by default). The pool also enables SSL automatically on Vercel. |
 
@@ -134,6 +134,6 @@ Bookings still succeed. Every email is:
 
 ## Cost estimate (hobby scale)
 
-- Vercel Hobby: **$0** · Vercel Postgres: free tier included · Resend: **$0** (100/day) · Neon: **$0** tier available.
+- Vercel Hobby: free tier · Vercel Postgres: free tier included · Resend: free tier (100/day) · Neon: free tier available.
 
-Total to run: **$0/month** to start. ✂
+Total to run: free to start. ✂

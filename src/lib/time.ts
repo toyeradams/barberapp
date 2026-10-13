@@ -20,8 +20,16 @@ export function formatTime12(time: string): string {
   return `${hr}:${String(m).padStart(2, "0")} ${ampm}`;
 }
 
-export function formatPrice(cents: number, currency = "$"): string {
-  return `${currency}${(cents / 100).toFixed(cents % 100 === 0 ? 0 : 2)}`;
+export const PRICE_CURRENCY = "ZAR" as const;
+
+/** Format stored minor-unit prices as South African Rand (ZAR). */
+export function formatPrice(cents: number): string {
+  return new Intl.NumberFormat("en-ZA", {
+    style: "currency",
+    currency: PRICE_CURRENCY,
+    minimumFractionDigits: cents % 100 === 0 ? 0 : 2,
+    maximumFractionDigits: 2,
+  }).format(cents / 100);
 }
 
 export function formatDateLong(isoDate: string): string {

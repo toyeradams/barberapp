@@ -34,8 +34,7 @@ export default function AdminEmailsPage() {
             <p className="mt-1 text-[#a7a7b0]">{provider.hint}</p>
             {!provider.configured && (
               <p className="mt-2 text-xs text-[#a7a7b0]">
-                Set <code className="rounded bg-white/10 px-1 font-mono">RESEND_API_KEY</code> (easiest — free tier) or{" "}
-                <code className="rounded bg-white/10 px-1 font-mono">SMTP_HOST</code> etc. in Vercel → Project → Settings → Environment Variables, then redeploy. See the Deploy tab.
+                For Resend, set both <code className="rounded bg-white/10 px-1 font-mono">RESEND_API_KEY</code> and <code className="rounded bg-white/10 px-1 font-mono">EMAIL_FROM</code> (a verified sender). Or configure <code className="rounded bg-white/10 px-1 font-mono">SMTP_HOST</code>, <code className="rounded bg-white/10 px-1 font-mono">SMTP_USER</code>, <code className="rounded bg-white/10 px-1 font-mono">SMTP_PASS</code> and <code className="rounded bg-white/10 px-1 font-mono">EMAIL_FROM</code> in Vercel → Project → Settings → Environment Variables, then redeploy. No provider means no email is sent. See the Deploy tab.
               </p>
             )}
           </div>
@@ -46,7 +45,7 @@ export default function AdminEmailsPage() {
         {loading ? (
           <div className="grid h-48 place-items-center"><Loader2 className="h-7 w-7 animate-spin text-[#c9a86a]" /></div>
         ) : emails.length === 0 ? (
-          <p className="p-10 text-center text-sm text-[#6b6b72]">No emails sent yet — they&apos;ll appear here after the first booking.</p>
+          <p className="p-10 text-center text-sm text-[#6b6b72]">No email attempts yet — delivery attempts appear here after a booking.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[700px] text-left text-sm">

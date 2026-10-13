@@ -159,7 +159,7 @@ export default function AdminHairstylesPage() {
                 <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} placeholder="What's included…" className={input} />
               </Field>
               <div className="grid grid-cols-3 gap-3">
-                <Field label="Price ($) *">
+                <Field label="Price (ZAR) *">
                   <input type="number" min="0" step="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} className={input} />
                 </Field>
                 <Field label="Duration (min)">

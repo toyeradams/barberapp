@@ -1,9 +1,9 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 
-export const ADMIN_COOKIE = "sharpfade_admin";
+export const ADMIN_COOKIE = "rizz_fade_admin";
 
 function secret(): string {
-  return process.env.ADMIN_SESSION_SECRET || "sharpfade-dev-secret-change-me";
+  return process.env.ADMIN_SESSION_SECRET || "rizz-fade-dev-secret-change-me";
 }
 
 export function adminPassword(): string {

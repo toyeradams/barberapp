@@ -40,7 +40,7 @@ export default function AdminAnalyticsPage() {
   const chartData = (data.byDay ?? []).map((d: any) => ({
     ...d,
     label: d.date.slice(5),
-    revenue: Math.round(d.revenueCents / 100),
+    revenue: d.revenueCents / 100,
   }));
 
   const STATUS_COLORS: Record<string, string> = {
@@ -80,7 +80,7 @@ export default function AdminAnalyticsPage() {
       <div className="mt-4 grid gap-4 lg:grid-cols-3">
         <div className="rounded-2xl border border-white/10 bg-[#131316] p-5 lg:col-span-2">
           <h2 className="font-bold">Revenue trend</h2>
-          <p className="text-xs text-[#6b6b72]">Daily revenue in dollars</p>
+          <p className="text-xs text-[#6b6b72]">Daily revenue · South African Rand (ZAR)</p>
           <div className="mt-4 h-64">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData}>
@@ -91,8 +91,18 @@ export default function AdminAnalyticsPage() {
                   </linearGradient>
                 </defs>
                 <XAxis dataKey="label" tick={{ fill: "#6b6b72", fontSize: 11 }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
-                <YAxis tick={{ fill: "#6b6b72", fontSize: 11 }} axisLine={false} tickLine={false} />
-                <Tooltip />
+                <YAxis
+                  tick={{ fill: "#6b6b72", fontSize: 11 }}
+                  axisLine={false}
+                  tickLine={false}
+                  tickFormatter={(value: number) => formatPrice(Math.round(Number(value) * 100))}
+                />
+                <Tooltip
+                  formatter={(value, name) => [
+                    typeof value === "number" ? formatPrice(Math.round(value * 100)) : value,
+                    name === "revenue" ? "Revenue (ZAR)" : name,
+                  ]}
+                />
                 <Area type="monotone" dataKey="revenue" stroke={GOLD} strokeWidth={2.5} fill="url(#rev)" />
               </AreaChart>
             </ResponsiveContainer>

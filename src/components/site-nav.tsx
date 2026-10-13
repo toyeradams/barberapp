@@ -27,7 +27,7 @@ export function SiteNav() {
           </span>
           <span className="leading-tight">
             <span className="font-display block text-lg font-bold tracking-wide">
-              SHARP<span className="text-gold-gradient">FADE</span>
+              RIZZ <span className="text-gold-gradient">FADE</span>
             </span>
             <span className="block text-[10px] uppercase tracking-[0.3em] text-[#a7a7b0]">
               Barbershop

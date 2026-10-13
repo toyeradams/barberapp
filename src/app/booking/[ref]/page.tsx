@@ -2,7 +2,7 @@
 
 import { use, useEffect, useState } from "react";
 import Link from "next/link";
-import { Loader2, CalendarDays, Clock, User, Scissors, ArrowLeft, XCircle, CheckCircle2 } from "lucide-react";
+import { Loader2, CalendarDays, Clock, User, Scissors, ArrowLeft, XCircle, CheckCircle2, MailCheck } from "lucide-react";
 import { formatDateLong, formatPrice, formatTime12 } from "@/lib/time";
 
 export default function BookingDetailPage({ params }: { params: Promise<{ ref: string }> }) {
@@ -11,9 +11,12 @@ export default function BookingDetailPage({ params }: { params: Promise<{ ref: s
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [cancelling, setCancelling] = useState(false);
+  const [resending, setResending] = useState(false);
   const [showCancel, setShowCancel] = useState(false);
   const [email, setEmail] = useState("");
   const [msg, setMsg] = useState("");
+  const [emailResult, setEmailResult] = useState("");
+  const [emailError, setEmailError] = useState("");
 
   useEffect(() => {
     fetch(`/api/bookings/${ref}`)
@@ -44,6 +47,29 @@ export default function BookingDetailPage({ params }: { params: Promise<{ ref: s
       setShowCancel(false);
     } finally {
       setCancelling(false);
+    }
+  }
+
+  async function resendConfirmation(targetEmail: string) {
+    setResending(true);
+    setEmailResult("");
+    setEmailError("");
+    try {
+      const res = await fetch(`/api/bookings/${ref}/email`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: targetEmail }),
+      });
+      const result = await res.json();
+      if (!res.ok || result.email?.sent !== true) {
+        setEmailError(result.email?.error || result.error || "The confirmation email could not be delivered.");
+        return;
+      }
+      setEmailResult(`Email accepted by ${result.email.provider} for ${targetEmail}. Check your inbox and spam folder.`);
+    } catch {
+      setEmailError("Network error while sending the email. Please try again.");
+    } finally {
+      setResending(false);
     }
   }
 
@@ -90,6 +116,23 @@ export default function BookingDetailPage({ params }: { params: Promise<{ ref: s
               <span className="text-xl font-extrabold text-[#e8cf9a]">{formatPrice(b.priceCents)}</span>
             </div>
           </dl>
+
+          {b.status === "confirmed" && (
+            <div className="mt-6 rounded-xl border border-[#c9a86a]/25 bg-[#c9a86a]/5 p-4">
+              <p className="text-sm font-bold">Need another copy of your confirmation?</p>
+              <p className="mt-1 text-xs text-[#a7a7b0]">Send it to {b.customerEmail}</p>
+              <button
+                onClick={() => resendConfirmation(b.customerEmail)}
+                disabled={resending}
+                className="mt-3 inline-flex items-center gap-2 rounded-full bg-[#c9a86a] px-4 py-2.5 text-xs font-extrabold text-[#0b0b0d] transition hover:bg-[#e8cf9a] disabled:opacity-60"
+              >
+                {resending ? <Loader2 className="h-4 w-4 animate-spin" /> : <MailCheck className="h-4 w-4" />}
+                {resending ? "Sending…" : "Resend confirmation email"}
+              </button>
+              {emailResult && <p className="mt-3 text-xs text-emerald-200">{emailResult}</p>}
+              {emailError && <p className="mt-3 text-xs leading-relaxed text-amber-200">{emailError}</p>}
+            </div>
+          )}
 
           {b.status === "confirmed" && !showCancel && (
             <button

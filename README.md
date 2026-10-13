@@ -1,6 +1,8 @@
-# ✂ SharpFade Barbershop — Online Booking App
+# ✂ Rizz Fade Barbershop — Online Booking App
 
-A complete, production-ready barber booking platform. Customers book in 4 steps and get an **instant email confirmation**. Admins manage bookings, hairstyles, barbers, availability and analytics — plus a built-in **Deploy to Vercel** guide.
+A complete barber booking platform for Rizz Fade. Customers book in 4 steps and see their booking reference instantly; branded email confirmations are sent when a live provider is configured. Admins manage bookings, hairstyles, barbers, availability and analytics — plus a built-in **Deploy to Vercel** guide.
+
+**Currency:** All service prices and revenue analytics are South African Rand (**ZAR**), formatted using the `en-ZA` locale.
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new)
 
@@ -13,7 +15,7 @@ A complete, production-ready barber booking platform. Customers book in 4 steps 
 2. **Pick barber, date & time** — live availability, no double-booking, 14-day window
 3. **Enter details** — name, email, phone, notes for the barber
 4. **Review & confirm** — full summary before committing
-5. **Email confirmation** — branded HTML email with booking reference + manage link
+5. **Email confirmation** — branded HTML email with booking reference + manage link when Resend or SMTP is configured; failed attempts are clearly logged and can be retried.
 
 Extras: booking lookup by reference or email, self-cancel with email verification.
 

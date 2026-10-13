@@ -24,14 +24,14 @@ function buildPoolConfig(): PoolConfig {
 }
 
 const globalForDb = globalThis as typeof globalThis & {
-  __sharpfadePool?: Pool;
+  __rizzFadePool?: Pool;
 };
 
 export const pool: Pool =
-  globalForDb.__sharpfadePool ?? new Pool(buildPoolConfig());
+  globalForDb.__rizzFadePool ?? new Pool(buildPoolConfig());
 
 if (process.env.NODE_ENV !== "production") {
-  globalForDb.__sharpfadePool = pool;
+  globalForDb.__rizzFadePool = pool;
 }
 
 export const db = drizzle(pool);

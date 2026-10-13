@@ -5,9 +5,9 @@ import { SiteNav } from "@/components/site-nav";
 import { SiteFooter } from "@/components/site-footer";
 
 export const metadata: Metadata = {
-  title: "SharpFade Barbershop — Book Your Cut Online",
+  title: "Rizz Fade Barbershop — Book Your Cut Online",
   description:
-    "Book your fade, beard sculpt or hot-towel shave online in under a minute. Instant email confirmation. Walk-ins welcome, bookings preferred.",
+    "Book your fade, beard sculpt or hot-towel shave online in under a minute. Instant booking reference and email confirmation when configured. Walk-ins welcome, bookings preferred.",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

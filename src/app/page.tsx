@@ -58,8 +58,8 @@ export default async function HomePage() {
             </h1>
             <p className="animate-fade-up stagger-2 mt-6 max-w-xl text-lg leading-relaxed text-[#d8d8de]">
               Precision fades, beard architecture and hot-towel shaves from master
-              barbers. Book your chair online in under a minute — instant email
-              confirmation, zero phone tag.
+              barbers. Book your chair online in under a minute — get your booking
+              reference instantly, with email confirmation when delivery is configured.
             </p>
             <div className="animate-fade-up stagger-3 mt-8 flex flex-wrap gap-3">
               <Link
@@ -82,7 +82,7 @@ export default async function HomePage() {
                 <Clock className="h-4 w-4 text-[#c9a86a]" /> Open today 9:00 – 19:00
               </span>
               <span className="flex items-center gap-2">
-                <MailCheck className="h-4 w-4 text-[#c9a86a]" /> Instant email confirmation
+                <MailCheck className="h-4 w-4 text-[#c9a86a]" /> Booking reference instantly
               </span>
               <span className="flex items-center gap-2">
                 <BadgeCheck className="h-4 w-4 text-[#c9a86a]" /> Free cancellation
@@ -120,7 +120,7 @@ export default async function HomePage() {
             { n: "01", t: "Pick your style", d: "Choose from 6 signature services with transparent pricing.", icon: Scissors },
             { n: "02", t: "Choose date & time", d: "Live availability — only real open slots, no double-booking.", icon: CalendarCheck },
             { n: "03", t: "Confirm details", d: "Review barber, time and price before you commit.", icon: BadgeCheck },
-            { n: "04", t: "Get confirmed", d: "Instant email confirmation with your booking reference.", icon: MailCheck },
+            { n: "04", t: "Get confirmed", d: "Your reference appears instantly; an email follows when a delivery provider is configured.", icon: MailCheck },
           ].map((s) => (
             <div
               key={s.n}
