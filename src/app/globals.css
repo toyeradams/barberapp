@@ -1,0 +1,115 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #0b0b0d;
+  --color-coal: #131316;
+  --color-smoke: #1b1b20;
+  --color-line: #2a2a31;
+  --color-gold: #c9a86a;
+  --color-gold-light: #e8cf9a;
+  --color-gold-dark: #8a6d35;
+  --color-cream: #f5efe6;
+  --color-muted: #a7a7b0;
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-body: "Inter", system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-ink);
+  color: var(--color-cream);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+::selection {
+  background: #c9a86a;
+  color: #0b0b0d;
+}
+
+/* scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: #0b0b0d; }
+::-webkit-scrollbar-thumb { background: #2a2a31; border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: #c9a86a; }
+
+/* gold texture text */
+.text-gold-gradient {
+  background: linear-gradient(120deg, #f3e2b3 0%, #c9a86a 40%, #8a6d35 70%, #e8cf9a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.card-sheen {
+  position: relative;
+  overflow: hidden;
+}
+.card-sheen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(201, 168, 106, 0.12) 50%, transparent 60%);
+  transform: translateX(-100%);
+  transition: transform 0.9s ease;
+  pointer-events: none;
+}
+.card-sheen:hover::after {
+  transform: translateX(100%);
+}
+
+/* marquee */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 28s linear infinite;
+}
+
+/* fade up */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-up {
+  animation: fadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.stagger-1 { animation-delay: 0.08s; }
+.stagger-2 { animation-delay: 0.16s; }
+.stagger-3 { animation-delay: 0.24s; }
+.stagger-4 { animation-delay: 0.32s; }
+
+/* striped barber pole accent */
+.barber-stripes {
+  background: repeating-linear-gradient(
+    -45deg,
+    #c9a86a 0 14px,
+    #0b0b0d 14px 28px,
+    #7a1f1f 28px 42px,
+    #0b0b0d 42px 56px
+  );
+}
+
+input, select, textarea {
+  color-scheme: dark;
+}
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.8) sepia(0.6) saturate(3) hue-rotate(5deg);
+  cursor: pointer;
+}
+
+/* recharts dark tooltip */
+.recharts-default-tooltip {
+  background: #1b1b20 !important;
+  border: 1px solid #2a2a31 !important;
+  border-radius: 12px !important;
+  color: #f5efe6 !important;
+}
