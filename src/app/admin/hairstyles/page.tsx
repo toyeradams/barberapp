@@ -19,6 +19,7 @@ export default function AdminHairstylesPage() {
   const [modal, setModal] = useState<null | { mode: "add" | "edit"; row?: H }>(null);
   const [form, setForm] = useState<any>(EMPTY);
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
 
   async function load() {
     setLoading(true);
@@ -32,10 +33,12 @@ export default function AdminHairstylesPage() {
   useEffect(() => { load(); }, []);
 
   function openAdd() {
+    setSaveError("");
     setForm({ ...EMPTY });
     setModal({ mode: "add" });
   }
   function openEdit(row: H) {
+    setSaveError("");
     setForm({
       name: row.name,
       description: row.description,
@@ -50,16 +53,24 @@ export default function AdminHairstylesPage() {
   }
 
   async function save() {
-    if (!form.name.trim()) return alert("Name is required");
+    setSaveError("");
+    if (form.name.trim().length < 2) {
+      setSaveError("Enter a hairstyle name with at least 2 characters.");
+      return;
+    }
+    if (form.price === "" || !Number.isFinite(Number(form.price)) || Number(form.price) < 0) {
+      setSaveError("Enter a valid, non-negative price in ZAR.");
+      return;
+    }
     setSaving(true);
     try {
       const payload = {
-        name: form.name,
-        description: form.description,
-        price: Number(form.price) || 0,
+        name: String(form.name).trim(),
+        description: String(form.description ?? ""),
+        price: Number(form.price),
         durationMinutes: Number(form.durationMinutes) || 30,
-        category: form.category,
-        imageUrl: form.imageUrl || "https://images.pexels.com/photos/4625626/pexels-photo-4625626.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        category: String(form.category || "Haircut"),
+        imageUrl: String(form.imageUrl || "https://images.pexels.com/photos/4625626/pexels-photo-4625626.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"),
         isActive: Boolean(form.isActive),
         sortOrder: Number(form.sortOrder) || 0,
       };
@@ -69,13 +80,15 @@ export default function AdminHairstylesPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+      const result = await res.json().catch(() => ({}));
       if (!res.ok) {
-        const d = await res.json();
-        alert(d.error || "Save failed");
+        setSaveError(result.error || `Save failed (HTTP ${res.status}). Please try again.`);
         return;
       }
       setModal(null);
-      load();
+      await load();
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : "Network error while saving. Check your connection and retry.");
     } finally {
       setSaving(false);
     }
@@ -151,9 +164,14 @@ export default function AdminHairstylesPage() {
               <h2 className="text-lg font-bold">{modal.mode === "add" ? "Add hairstyle" : "Edit hairstyle"}</h2>
               <button onClick={() => setModal(null)} className="rounded-lg p-1.5 hover:bg-white/10"><X className="h-5 w-5" /></button>
             </div>
+            {saveError && (
+              <p role="alert" className="mt-4 rounded-xl border border-red-500/40 bg-red-500/10 p-3 text-sm leading-relaxed text-red-200">
+                {saveError}
+              </p>
+            )}
             <div className="mt-4 space-y-3">
               <Field label="Name *">
-                <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Signature Skin Fade" className={input} />
+                <input maxLength={120} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Signature Skin Fade" className={input} />
               </Field>
               <Field label="Description">
                 <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} placeholder="What's included…" className={input} />

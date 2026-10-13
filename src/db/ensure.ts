@@ -30,6 +30,19 @@ export async function ensureSchema(): Promise<void> {
         updated_at TIMESTAMP NOT NULL DEFAULT NOW()
       );
     `);
+    // Repair columns on older deployments too. CREATE TABLE IF NOT EXISTS alone
+    // does not update a table that already exists in Postgres.
+    await db.execute(sql`ALTER TABLE hairstyles ADD COLUMN IF NOT EXISTS name VARCHAR(120) NOT NULL DEFAULT '';`);
+    await db.execute(sql`ALTER TABLE hairstyles ADD COLUMN IF NOT EXISTS description TEXT NOT NULL DEFAULT '';`);
+    await db.execute(sql`ALTER TABLE hairstyles ADD COLUMN IF NOT EXISTS price_cents INTEGER NOT NULL DEFAULT 0;`);
+    await db.execute(sql`ALTER TABLE hairstyles ADD COLUMN IF NOT EXISTS duration_minutes INTEGER NOT NULL DEFAULT 30;`);
+    await db.execute(sql`ALTER TABLE hairstyles ADD COLUMN IF NOT EXISTS category VARCHAR(60) NOT NULL DEFAULT 'Haircut';`);
+    await db.execute(sql`ALTER TABLE hairstyles ADD COLUMN IF NOT EXISTS image_url TEXT NOT NULL DEFAULT '';`);
+    await db.execute(sql`ALTER TABLE hairstyles ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT true;`);
+    await db.execute(sql`ALTER TABLE hairstyles ADD COLUMN IF NOT EXISTS sort_order INTEGER NOT NULL DEFAULT 0;`);
+    await db.execute(sql`ALTER TABLE hairstyles ADD COLUMN IF NOT EXISTS created_at TIMESTAMP NOT NULL DEFAULT NOW();`);
+    await db.execute(sql`ALTER TABLE hairstyles ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP NOT NULL DEFAULT NOW();`);
+
     await db.execute(sql`
       CREATE TABLE IF NOT EXISTS barbers (
         id SERIAL PRIMARY KEY,

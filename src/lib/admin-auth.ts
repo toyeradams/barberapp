@@ -1,13 +1,14 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 
 export const ADMIN_COOKIE = "rizz_fade_admin";
+export const LEGACY_ADMIN_COOKIE = "sharpfade_admin";
 
 function secret(): string {
   return process.env.ADMIN_SESSION_SECRET || "rizz-fade-dev-secret-change-me";
 }
 
 export function adminPassword(): string {
-  return process.env.ADMIN_PASSWORD || "admin1234";
+  return process.env.ADMIN_PASSWORD || "admin123";
 }
 
 type Payload = { admin: true; exp: number };
@@ -26,11 +27,14 @@ export function createAdminToken(): string {
   return `${body}.${sig}`;
 }
 
-export function verifyAdminToken(token: string | undefined | null): boolean {
+export function verifyAdminToken(
+  token: string | undefined | null,
+  signingSecret = secret()
+): boolean {
   if (!token || !token.includes(".")) return false;
   try {
     const [body, sig] = token.split(".");
-    const expected = createHmac("sha256", secret()).update(body).digest("base64url");
+    const expected = createHmac("sha256", signingSecret).update(body).digest("base64url");
     const a = Buffer.from(sig);
     const b = Buffer.from(expected);
     if (a.length !== b.length || !timingSafeEqual(a, b)) return false;
@@ -59,4 +63,20 @@ export function getCookieFromHeader(cookieHeader: string | null, name: string): 
     if (k === name) return rest.join("=");
   }
   return null;
+}
+
+/** Accept sessions created before the Rizz Fade cookie rename. */
+export function verifyAdminCookieHeader(cookieHeader: string | null): boolean {
+  const current = getCookieFromHeader(cookieHeader, ADMIN_COOKIE);
+  if (verifyAdminToken(current)) return true;
+
+  const legacy = getCookieFromHeader(cookieHeader, LEGACY_ADMIN_COOKIE);
+  if (verifyAdminToken(legacy)) return true;
+
+  // Before ADMIN_SESSION_SECRET was configured, old local sessions used this
+  // development fallback. Keep them valid only when no explicit secret exists.
+  if (!process.env.ADMIN_SESSION_SECRET) {
+    return verifyAdminToken(legacy, "sharpfade-dev-secret-change-me");
+  }
+  return false;
 }
