@@ -7,7 +7,7 @@ function secret(): string {
 }
 
 export function adminPassword(): string {
-  return process.env.ADMIN_PASSWORD || "admin123";
+  return process.env.ADMIN_PASSWORD || "admin1234";
 }
 
 type Payload = { admin: true; exp: number };
